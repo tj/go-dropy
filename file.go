@@ -32,21 +32,28 @@ func (f *File) Read(b []byte) (int, error) {
 // Write implements io.Writer.
 //
 // Note that the upload occurs when the Close
-// method is invoked, until then the contents
-// are buffered in-memory.
+// or Sync methods are invoked, until then
+// the contents are buffered in-memory.
 func (f *File) Write(b []byte) (int, error) {
 	return f.w.Write(b)
+}
+
+// Sync the file to Dropbox.
+func (f *File) Sync() error {
+	_, err := f.c.Files.Upload(&dropbox.UploadInput{
+		Mode:   dropbox.WriteModeOverwrite,
+		Path:   f.Name,
+		Mute:   true,
+		Reader: bytes.NewBuffer(f.w.Bytes()),
+	})
+
+	return err
 }
 
 // Close implements io.Closer.
 func (f *File) Close() error {
 	if f.w.Len() > 0 {
-		f.c.Files.Upload(&dropbox.UploadInput{
-			Mode:   dropbox.WriteModeOverwrite,
-			Path:   f.Name,
-			Mute:   true,
-			Reader: bytes.NewBuffer(f.w.Bytes()),
-		})
+		return f.Sync()
 	}
 
 	return nil
