@@ -93,8 +93,6 @@ func (f *File) Sync() error {
 		Reader: bytes.NewBuffer(f.w.Bytes()),
 	})
 
-	f.w.Reset()
-
 	return err
 }
 
@@ -113,7 +111,11 @@ func (f *File) Close() error {
 	}
 
 	if f.w.Len() > 0 {
-		return f.Sync()
+		if err := f.Sync(); err != nil {
+			return err
+		}
+
+		f.w.Reset()
 	}
 
 	return nil
