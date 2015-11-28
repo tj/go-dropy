@@ -54,6 +54,12 @@ func (f *File) Sync() error {
 
 // Close implements io.Closer.
 func (f *File) Close() error {
+	if f.r != nil {
+		if err := f.r.Close(); err != nil {
+			return err
+		}
+	}
+
 	if f.w.Len() > 0 {
 		return f.Sync()
 	}
