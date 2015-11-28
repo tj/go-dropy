@@ -1,6 +1,7 @@
 package dropy
 
 import (
+	"io/ioutil"
 	"testing"
 
 	"github.com/segmentio/go-env"
@@ -55,6 +56,19 @@ func TestClient_List_count(t *testing.T) {
 	ents, err := c.List("/list", 1234)
 	assert.NoError(t, err)
 	assert.Equal(t, 1234, len(ents))
+}
+
+func TestClient_Open(t *testing.T) {
+	t.Parallel()
+	c := client()
+
+	f, err := c.Open("/hello.txt")
+	assert.NoError(t, err)
+
+	b, err := ioutil.ReadAll(f)
+	assert.NoError(t, err)
+
+	assert.Equal(t, "whoop", string(b))
 }
 
 func TestClient_ReadAll(t *testing.T) {
