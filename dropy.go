@@ -3,6 +3,7 @@ package dropy
 
 import (
 	"io"
+	"io/ioutil"
 	"os"
 	"time"
 
@@ -118,4 +119,24 @@ func (c *Client) Readdir(name string, n int) (ents []os.FileInfo, err error) {
 	}
 
 	return
+}
+
+// Read returns an io.ReadCloser for `name`.
+func (c *Client) Read(name string) (io.ReadCloser, error) {
+	out, err := c.Files.Download(&dropbox.DownloadInput{name})
+	if err != nil {
+		return nil, err
+	}
+
+	return out.Body, nil
+}
+
+// ReadAll returns the contents of `name`.
+func (c *Client) ReadAll(name string) ([]byte, error) {
+	r, err := c.Read(name)
+	if err != nil {
+		return nil, err
+	}
+
+	return ioutil.ReadAll(r)
 }

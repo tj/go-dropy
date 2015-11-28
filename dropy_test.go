@@ -48,3 +48,11 @@ func TestClient_Readdir_count(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 1234, len(ents))
 }
+
+func TestClient_ReadAll(t *testing.T) {
+	t.Parallel()
+	c := client()
+	b, err := c.ReadAll("/hello.txt")
+	assert.NoError(t, err)
+	assert.Equal(t, "whoop", string(b))
+}
