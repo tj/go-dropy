@@ -3,9 +3,52 @@ package dropy
 import (
 	"bytes"
 	"io"
+	"os"
+	"time"
 
 	"github.com/tj/go-dropbox"
 )
+
+// FileInfo wraps Dropbox file MetaData to implement os.FileInfo.
+type FileInfo struct {
+	meta *dropbox.Metadata
+}
+
+// Name of the file.
+func (f *FileInfo) Name() string {
+	return f.meta.Name
+}
+
+// Size of the file.
+func (f *FileInfo) Size() int64 {
+	return int64(f.meta.Size)
+}
+
+// IsDir returns true if the file is a directory.
+func (f *FileInfo) IsDir() bool {
+	return f.meta.Tag == "folder"
+}
+
+// Sys is not implemented.
+func (f *FileInfo) Sys() interface{} {
+	return nil
+}
+
+// ModTime returns the modification time.
+func (f *FileInfo) ModTime() time.Time {
+	return f.meta.ServerModified
+}
+
+// Mode returns the file mode flags.
+func (f *FileInfo) Mode() os.FileMode {
+	var m os.FileMode
+
+	if f.IsDir() {
+		m |= os.ModeDir
+	}
+
+	return m
+}
 
 // File implements an io.ReadWriteCloser for Dropbox files.
 type File struct {

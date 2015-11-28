@@ -70,6 +70,18 @@ func TestClient_Open(t *testing.T) {
 	assert.Equal(t, "whoop", string(b))
 }
 
+func TestCient_Open_missing(t *testing.T) {
+	t.Parallel()
+	c := client()
+
+	f := c.Open("/dev/null")
+
+	b, err := ioutil.ReadAll(f)
+	assert.NoError(t, err)
+
+	assert.Equal(t, "whoop", string(b))
+}
+
 func TestClient_ReadAll(t *testing.T) {
 	t.Parallel()
 	c := client()
