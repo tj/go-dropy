@@ -76,8 +76,8 @@ func (c *Client) Stat(name string) (os.FileInfo, error) {
 	return &FileInfo{&out.Metadata}, nil
 }
 
-// List returns entries in dir `name`. Up to `n` entries, or all when `n` <= 0.
-func (c *Client) List(name string, n int) (ents []os.FileInfo, err error) {
+// Readdir returns entries in dir `name`. Up to `n` entries, or all when `n` <= 0.
+func (c *Client) Readdir(name string, n int) (ents []os.FileInfo, err error) {
 	var cursor string
 
 	if n <= 0 {
@@ -121,9 +121,9 @@ func (c *Client) List(name string, n int) (ents []os.FileInfo, err error) {
 	return
 }
 
-// ListAll returns all entries in dir `name`.
-func (c *Client) ListAll(name string) ([]os.FileInfo, error) {
-	return c.List(name, 0)
+// List returns all entries in dir `name`.
+func (c *Client) List(name string) ([]os.FileInfo, error) {
+	return c.Readdir(name, 0)
 }
 
 // Open returns a File for reading and writing.

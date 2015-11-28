@@ -26,34 +26,34 @@ func TestClient_Stat(t *testing.T) {
 	assert.Equal(t, int64(5), info.Size())
 }
 
-func TestClient_ListAll(t *testing.T) {
+func TestClient_List(t *testing.T) {
 	t.Parallel()
 	c := client()
-	ents, err := c.ListAll("/list")
+	ents, err := c.List("/list")
 	assert.NoError(t, err)
 	assert.Equal(t, 5000, len(ents))
 }
 
-func TestClient_List_zero(t *testing.T) {
+func TestClient_Readdir_zero(t *testing.T) {
 	t.Parallel()
 	c := client()
-	ents, err := c.List("/list", 0)
+	ents, err := c.Readdir("/Readdir", 0)
 	assert.NoError(t, err)
 	assert.Equal(t, 5000, len(ents))
 }
 
-func TestClient_List_subzero(t *testing.T) {
+func TestClient_Readdir_subzero(t *testing.T) {
 	t.Parallel()
 	c := client()
-	ents, err := c.List("/list", -5)
+	ents, err := c.Readdir("/Readdir", -5)
 	assert.NoError(t, err)
 	assert.Equal(t, 5000, len(ents))
 }
 
-func TestClient_List_count(t *testing.T) {
+func TestClient_Readdir_count(t *testing.T) {
 	t.Parallel()
 	c := client()
-	ents, err := c.List("/list", 1234)
+	ents, err := c.Readdir("/list", 1234)
 	assert.NoError(t, err)
 	assert.Equal(t, 1234, len(ents))
 }
