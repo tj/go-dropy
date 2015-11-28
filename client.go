@@ -126,22 +126,15 @@ func (c *Client) ListAll(name string) ([]os.FileInfo, error) {
 	return c.List(name, 0)
 }
 
-// Open returns an io.ReadCloser for `name`.
-func (c *Client) Open(name string) (io.ReadCloser, error) {
-	out, err := c.Files.Download(&dropbox.DownloadInput{name})
-	if err != nil {
-		return nil, err
+// Open returns a File for reading and writing.
+func (c *Client) Open(name string) *File {
+	return &File{
+		Name: name,
+		c:    c,
 	}
-
-	return out.Body, nil
 }
 
 // ReadAll returns the contents of `name`.
 func (c *Client) ReadAll(name string) ([]byte, error) {
-	r, err := c.Open(name)
-	if err != nil {
-		return nil, err
-	}
-
-	return ioutil.ReadAll(r)
+	return ioutil.ReadAll(c.Open(name))
 }

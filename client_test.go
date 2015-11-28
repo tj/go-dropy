@@ -62,8 +62,7 @@ func TestClient_Open(t *testing.T) {
 	t.Parallel()
 	c := client()
 
-	f, err := c.Open("/hello.txt")
-	assert.NoError(t, err)
+	f := c.Open("/hello.txt")
 
 	b, err := ioutil.ReadAll(f)
 	assert.NoError(t, err)
