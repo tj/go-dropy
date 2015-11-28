@@ -136,5 +136,7 @@ func (c *Client) Open(name string) *File {
 
 // ReadAll returns the contents of `name`.
 func (c *Client) ReadAll(name string) ([]byte, error) {
-	return ioutil.ReadAll(c.Open(name))
+	f := c.Open(name)
+	defer f.Close()
+	return ioutil.ReadAll(f)
 }

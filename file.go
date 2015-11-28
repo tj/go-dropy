@@ -35,3 +35,8 @@ func (f *File) download() error {
 	f.r = out.Body
 	return nil
 }
+
+// Close the file.
+func (f *File) Close() error {
+	return nil
+}
