@@ -19,10 +19,27 @@ func TestFile_Open(t *testing.T) {
 	assert.Equal(t, "whoop", string(b))
 }
 
-func TestFile_Close(t *testing.T) {
+func TestFile_Close_read(t *testing.T) {
 	t.Parallel()
 	c := client()
 
 	f := c.Open("/hello.txt")
+	assert.NoError(t, f.Close())
+}
+
+func TestFile_Close_write(t *testing.T) {
+	t.Parallel()
+	c := client()
+
+	f := c.Open("/hello-world.txt")
+
+	{
+		_, err := f.Write([]byte("Hello"))
+		assert.NoError(t, err)
+	}
+
+	_, err := f.Write([]byte(" World"))
+	assert.NoError(t, err)
+
 	assert.NoError(t, f.Close())
 }

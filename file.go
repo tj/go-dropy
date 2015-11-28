@@ -1,6 +1,7 @@
 package dropy
 
 import (
+	"bytes"
 	"io"
 
 	"github.com/tj/go-dropbox"
@@ -10,11 +11,14 @@ import (
 type File struct {
 	Name string
 	c    *Client
+	w    bytes.Buffer
 	r    io.ReadCloser
 }
 
-// Read implementation, note that the first call to this method
-// triggers the download, seeking is currently not supported.
+// Read implements io.Reader
+//
+// Note that the first call to this method triggers
+// the download, seeking is currently not supported.
 func (f *File) Read(b []byte) (int, error) {
 	if f.r == nil {
 		if err := f.download(); err != nil {
@@ -25,6 +29,29 @@ func (f *File) Read(b []byte) (int, error) {
 	return f.r.Read(b)
 }
 
+// Write implements io.Writer.
+//
+// Note that the upload occurs when the Close
+// method is invoked, until then the contents
+// are buffered in-memory.
+func (f *File) Write(b []byte) (int, error) {
+	return f.w.Write(b)
+}
+
+// Close implements io.Closer.
+func (f *File) Close() error {
+	if f.w.Len() > 0 {
+		f.c.Files.Upload(&dropbox.UploadInput{
+			Mode:   dropbox.WriteModeOverwrite,
+			Path:   f.Name,
+			Mute:   true,
+			Reader: bytes.NewBuffer(f.w.Bytes()),
+		})
+	}
+
+	return nil
+}
+
 // download the file.
 func (f *File) download() error {
 	out, err := f.c.Files.Download(&dropbox.DownloadInput{f.Name})
@@ -33,10 +60,5 @@ func (f *File) download() error {
 	}
 
 	f.r = out.Body
-	return nil
-}
-
-// Close the file.
-func (f *File) Close() error {
 	return nil
 }
