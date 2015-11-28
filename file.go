@@ -54,10 +54,11 @@ func (f *FileInfo) Mode() os.FileMode {
 
 // File implements an io.ReadWriteCloser for Dropbox files.
 type File struct {
-	Name string
-	c    *Client
-	w    bytes.Buffer
-	r    io.ReadCloser
+	Name   string
+	c      *Client
+	w      bytes.Buffer
+	r      io.ReadCloser
+	closed bool
 }
 
 // Read implements io.Reader
@@ -99,6 +100,12 @@ func (f *File) Sync() error {
 
 // Close implements io.Closer.
 func (f *File) Close() error {
+	if f.closed {
+		return &os.PathError{"close", f.Name, syscall.EINVAL}
+	}
+
+	f.closed = true
+
 	if f.r != nil {
 		if err := f.r.Close(); err != nil {
 			return err

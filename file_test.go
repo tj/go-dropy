@@ -40,6 +40,15 @@ func TestFile_Sync(t *testing.T) {
 	assert.Equal(t, "Hello World", string(b))
 }
 
+func TestFile_Close_inval(t *testing.T) {
+	t.Parallel()
+	c := client()
+
+	f := c.Open("/hello.txt")
+	assert.NoError(t, f.Close())
+	assert.EqualError(t, f.Close(), "close /hello.txt: invalid argument")
+}
+
 func TestFile_Close_read(t *testing.T) {
 	t.Parallel()
 	c := client()
