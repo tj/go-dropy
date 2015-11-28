@@ -18,3 +18,11 @@ func TestFile_Open(t *testing.T) {
 
 	assert.Equal(t, "whoop", string(b))
 }
+
+func TestFile_Close(t *testing.T) {
+	t.Parallel()
+	c := client()
+
+	f := c.Open("/hello.txt")
+	assert.NoError(t, f.Close())
+}
