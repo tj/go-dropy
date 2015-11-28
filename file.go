@@ -47,6 +47,8 @@ func (f *File) Sync() error {
 		Reader: bytes.NewBuffer(f.w.Bytes()),
 	})
 
+	f.w.Reset()
+
 	return err
 }
 
