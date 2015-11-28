@@ -76,8 +76,8 @@ func (c *Client) Stat(name string) (os.FileInfo, error) {
 	return &FileInfo{&out.Metadata}, nil
 }
 
-// Readdir reads entries in dir `name`. Up to `n` entries, or all when `n` <= 0.
-func (c *Client) Readdir(name string, n int) (ents []os.FileInfo, err error) {
+// ListCount lists entries in dir `name`. Up to `n` entries, or all when `n` <= 0.
+func (c *Client) ListCount(name string, n int) (ents []os.FileInfo, err error) {
 	var cursor string
 
 	if n <= 0 {
