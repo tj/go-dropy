@@ -46,10 +46,14 @@ func (c *Client) Readdir(name string, n int) (ents []os.FileInfo, err error) {
 		var out *dropbox.ListFolderOutput
 
 		if cursor == "" {
-			out, err = c.Files.ListFolder(&dropbox.ListFolderInput{Path: name})
+			if out, err = c.Files.ListFolder(&dropbox.ListFolderInput{Path: name}); err != nil {
+				return
+			}
 			cursor = out.Cursor
 		} else {
-			out, err = c.Files.ListFolderContinue(&dropbox.ListFolderContinueInput{cursor})
+			if out, err = c.Files.ListFolderContinue(&dropbox.ListFolderContinueInput{cursor}); err != nil {
+				return
+			}
 			cursor = out.Cursor
 		}
 

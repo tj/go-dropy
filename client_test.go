@@ -34,10 +34,17 @@ func TestClient_List(t *testing.T) {
 	assert.Equal(t, 5000, len(ents))
 }
 
+func TestClient_Readdir_missing(t *testing.T) {
+	t.Parallel()
+	c := client()
+	_, err := c.Readdir("/notfound", 0)
+	assert.Error(t, err)
+}
+
 func TestClient_Readdir_zero(t *testing.T) {
 	t.Parallel()
 	c := client()
-	ents, err := c.Readdir("/Readdir", 0)
+	ents, err := c.Readdir("/list", 0)
 	assert.NoError(t, err)
 	assert.Equal(t, 5000, len(ents))
 }
@@ -45,7 +52,7 @@ func TestClient_Readdir_zero(t *testing.T) {
 func TestClient_Readdir_subzero(t *testing.T) {
 	t.Parallel()
 	c := client()
-	ents, err := c.Readdir("/Readdir", -5)
+	ents, err := c.Readdir("/list", -5)
 	assert.NoError(t, err)
 	assert.Equal(t, 5000, len(ents))
 }
@@ -70,17 +77,17 @@ func TestClient_Open(t *testing.T) {
 	assert.Equal(t, "whoop", string(b))
 }
 
-func TestCient_Open_missing(t *testing.T) {
-	t.Parallel()
-	c := client()
+// func TestCient_Open_missing(t *testing.T) {
+// 	t.Parallel()
+// 	c := client()
 
-	f := c.Open("/dev/null")
+// 	f := c.Open("/dev/null")
 
-	b, err := ioutil.ReadAll(f)
-	assert.NoError(t, err)
+// 	b, err := ioutil.ReadAll(f)
+// 	assert.NoError(t, err)
 
-	assert.Equal(t, "whoop", string(b))
-}
+// 	assert.Equal(t, "whoop", string(b))
+// }
 
 func TestClient_ReadAll(t *testing.T) {
 	t.Parallel()
