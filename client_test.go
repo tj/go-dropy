@@ -77,17 +77,15 @@ func TestClient_Open(t *testing.T) {
 	assert.Equal(t, "whoop", string(b))
 }
 
-// func TestCient_Open_missing(t *testing.T) {
-// 	t.Parallel()
-// 	c := client()
+func TestCient_Open_missing(t *testing.T) {
+	t.Parallel()
+	c := client()
 
-// 	f := c.Open("/dev/null")
+	f := c.Open("/dev/null")
 
-// 	b, err := ioutil.ReadAll(f)
-// 	assert.NoError(t, err)
-
-// 	assert.Equal(t, "whoop", string(b))
-// }
+	_, err := ioutil.ReadAll(f)
+	assert.EqualError(t, err, "open /dev/null: no such file or directory")
+}
 
 func TestClient_ReadAll(t *testing.T) {
 	t.Parallel()

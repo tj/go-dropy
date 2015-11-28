@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"io"
 	"os"
+	"strings"
+	"syscall"
 	"time"
 
 	"github.com/tj/go-dropbox"
@@ -114,7 +116,10 @@ func (f *File) Close() error {
 func (f *File) download() error {
 	out, err := f.c.Files.Download(&dropbox.DownloadInput{f.Name})
 	if err != nil {
-		return nil
+		if strings.HasPrefix(err.Error(), "path/not_found/") {
+			return &os.PathError{"open", f.Name, syscall.ENOENT}
+		}
+		return err
 	}
 
 	f.r = out.Body
