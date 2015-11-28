@@ -33,13 +33,16 @@ func TestFile_Close_write(t *testing.T) {
 
 	f := c.Open("/hello-world.txt")
 
-	{
-		_, err := f.Write([]byte("Hello"))
-		assert.NoError(t, err)
-	}
+	_, err := f.Write([]byte("Hello"))
+	assert.NoError(t, err)
 
-	_, err := f.Write([]byte(" World"))
+	_, err = f.Write([]byte(" World"))
 	assert.NoError(t, err)
 
 	assert.NoError(t, f.Close())
+
+	b, err := c.ReadAll("/hello-world.txt")
+	assert.NoError(t, err)
+
+	assert.Equal(t, "Hello World", string(b))
 }
