@@ -48,12 +48,12 @@ func TestFile_Sync_multi(t *testing.T) {
 
 	_, err := f.Write([]byte("Hello"))
 	assert.NoError(t, err)
+	assert.NoError(t, f.Sync())
 
 	_, err = f.Write([]byte(" World"))
 	assert.NoError(t, err)
+	assert.NoError(t, f.Sync())
 
-	assert.NoError(t, f.Sync())
-	assert.NoError(t, f.Sync())
 	assert.NoError(t, f.Close())
 
 	b, err := c.ReadAll("/hello-world.txt")
