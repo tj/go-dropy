@@ -2,6 +2,7 @@ package dropy
 
 import (
 	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/segmentio/go-env"
@@ -63,6 +64,16 @@ func TestClient_ListN_count(t *testing.T) {
 	ents, err := c.ListN("/list", 1234)
 	assert.NoError(t, err)
 	assert.Equal(t, 1234, len(ents))
+}
+
+func TestClient_ListFilter(t *testing.T) {
+	t.Parallel()
+	c := client()
+	ents, err := c.ListFilter("/list-types", func(info os.FileInfo) bool {
+		return info.IsDir()
+	})
+	assert.NoError(t, err)
+	assert.Equal(t, 3, len(ents))
 }
 
 func TestClient_Open(t *testing.T) {

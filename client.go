@@ -9,6 +9,9 @@ import (
 	"github.com/tj/go-dropbox"
 )
 
+// FilterFunc used to filter files by their meta-data.
+type FilterFunc func(info os.FileInfo) bool
+
 // Client wraps dropbox.Client to provide higher level sugar.
 type Client struct {
 	*dropbox.Client
@@ -86,6 +89,22 @@ func (c *Client) ListN(name string, n int) (ents []os.FileInfo, err error) {
 // List returns all entries in dir `name`.
 func (c *Client) List(name string) ([]os.FileInfo, error) {
 	return c.ListN(name, 0)
+}
+
+// ListFilter returns all entries in dir `name` filtered by `filter`.
+func (c *Client) ListFilter(name string, filter FilterFunc) (ret []os.FileInfo, err error) {
+	ents, err := c.ListN(name, 0)
+	if err != nil {
+		return
+	}
+
+	for _, ent := range ents {
+		if filter(ent) {
+			ret = append(ret, ent)
+		}
+	}
+
+	return
 }
 
 // Open returns a File for reading and writing.
