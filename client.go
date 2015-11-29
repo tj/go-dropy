@@ -90,9 +90,12 @@ func (c *Client) List(name string) ([]os.FileInfo, error) {
 
 // Open returns a File for reading and writing.
 func (c *Client) Open(name string) *File {
+	r, w := io.Pipe()
 	return &File{
-		Name: name,
-		c:    c,
+		Name:  name,
+		c:     c,
+		pipeR: r,
+		pipeW: w,
 	}
 }
 

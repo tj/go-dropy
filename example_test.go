@@ -17,7 +17,6 @@ func Example() {
 
 	file := client.Open("/demo.txt")
 	io.Copy(file, strings.NewReader("Hello World"))
-	file.Sync()
 
 	io.Copy(os.Stdout, file)
 	// Output: Hello World

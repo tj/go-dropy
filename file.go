@@ -1,7 +1,6 @@
 package dropy
 
 import (
-	"bytes"
 	"io"
 	"os"
 	"strings"
@@ -54,46 +53,44 @@ func (f *FileInfo) Mode() os.FileMode {
 
 // File implements an io.ReadWriteCloser for Dropbox files.
 type File struct {
-	Name   string
-	c      *Client
-	w      bytes.Buffer
-	r      io.ReadCloser
-	closed bool
+	Name    string
+	closed  bool
+	writing bool
+	reader  io.ReadCloser
+	pipeR   *io.PipeReader
+	pipeW   *io.PipeWriter
+	c       *Client
 }
 
 // Read implements io.Reader
-//
-// Note that the first call to this method triggers
-// the download, seeking is currently not supported.
 func (f *File) Read(b []byte) (int, error) {
-	if f.r == nil {
+	if f.reader == nil {
 		if err := f.download(); err != nil {
 			return 0, err
 		}
 	}
 
-	return f.r.Read(b)
+	return f.reader.Read(b)
 }
 
 // Write implements io.Writer.
-//
-// Note that the upload occurs when the Close
-// or Sync methods are invoked, until then
-// the contents are buffered in-memory.
 func (f *File) Write(b []byte) (int, error) {
-	return f.w.Write(b)
-}
+	if !f.writing {
+		f.writing = true
 
-// Sync the file to Dropbox.
-func (f *File) Sync() error {
-	_, err := f.c.Files.Upload(&dropbox.UploadInput{
-		Mode:   dropbox.WriteModeOverwrite,
-		Path:   f.Name,
-		Mute:   true,
-		Reader: bytes.NewBuffer(f.w.Bytes()),
-	})
+		go func() {
+			_, err := f.c.Files.Upload(&dropbox.UploadInput{
+				Mode:   dropbox.WriteModeOverwrite,
+				Path:   f.Name,
+				Mute:   true,
+				Reader: f.pipeR,
+			})
 
-	return err
+			f.pipeR.CloseWithError(err)
+		}()
+	}
+
+	return f.pipeW.Write(b)
 }
 
 // Close implements io.Closer.
@@ -101,21 +98,18 @@ func (f *File) Close() error {
 	if f.closed {
 		return &os.PathError{"close", f.Name, syscall.EINVAL}
 	}
-
 	f.closed = true
 
-	if f.r != nil {
-		if err := f.r.Close(); err != nil {
+	if f.writing {
+		if err := f.pipeW.Close(); err != nil {
 			return err
 		}
 	}
 
-	if f.w.Len() > 0 {
-		if err := f.Sync(); err != nil {
+	if f.reader != nil {
+		if err := f.reader.Close(); err != nil {
 			return err
 		}
-
-		f.w.Reset()
 	}
 
 	return nil
@@ -131,6 +125,6 @@ func (f *File) download() error {
 		return err
 	}
 
-	f.r = out.Body
+	f.reader = out.Body
 	return nil
 }

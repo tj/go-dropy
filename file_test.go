@@ -19,47 +19,12 @@ func TestFile_Open(t *testing.T) {
 	assert.Equal(t, "whoop", string(b))
 }
 
-func TestFile_Sync(t *testing.T) {
+func TestFile_Close(t *testing.T) {
 	t.Parallel()
 	c := client()
 
-	f := c.Open("/hello-world.txt")
-
-	_, err := f.Write([]byte("Hello"))
-	assert.NoError(t, err)
-
-	_, err = f.Write([]byte(" World"))
-	assert.NoError(t, err)
-
-	assert.NoError(t, f.Sync())
+	f := c.Open("/hello.txt")
 	assert.NoError(t, f.Close())
-
-	b, err := c.ReadAll("/hello-world.txt")
-	assert.NoError(t, err)
-
-	assert.Equal(t, "Hello World", string(b))
-}
-
-func TestFile_Sync_multi(t *testing.T) {
-	t.Parallel()
-	c := client()
-
-	f := c.Open("/hello-world-2.txt")
-
-	_, err := f.Write([]byte("Hello"))
-	assert.NoError(t, err)
-	assert.NoError(t, f.Sync())
-
-	_, err = f.Write([]byte(" World"))
-	assert.NoError(t, err)
-	assert.NoError(t, f.Sync())
-
-	assert.NoError(t, f.Close())
-
-	b, err := c.ReadAll("/hello-world.txt")
-	assert.NoError(t, err)
-
-	assert.Equal(t, "Hello World", string(b))
 }
 
 func TestFile_Close_inval(t *testing.T) {
@@ -71,29 +36,39 @@ func TestFile_Close_inval(t *testing.T) {
 	assert.EqualError(t, f.Close(), "close /hello.txt: invalid argument")
 }
 
-func TestFile_Close_read(t *testing.T) {
+func TestFile_Read(t *testing.T) {
 	t.Parallel()
 	c := client()
 
 	f := c.Open("/hello.txt")
+
+	b := make([]byte, 3)
+	n, err := f.Read(b)
+	assert.Equal(t, 3, n)
+	assert.NoError(t, err)
+	assert.Equal(t, "who", string(b))
+
 	assert.NoError(t, f.Close())
 }
 
-func TestFile_Close_write(t *testing.T) {
+func TestFile_Write(t *testing.T) {
 	t.Parallel()
 	c := client()
 
-	f := c.Open("/hello-world-3.txt")
+	f := c.Open("/hello-world-1.txt")
 
 	_, err := f.Write([]byte("Hello"))
 	assert.NoError(t, err)
 
-	_, err = f.Write([]byte(" World"))
+	_, err = f.Write([]byte(" Wor"))
+	assert.NoError(t, err)
+
+	_, err = f.Write([]byte("ld"))
 	assert.NoError(t, err)
 
 	assert.NoError(t, f.Close())
 
-	b, err := c.ReadAll("/hello-world-3.txt")
+	b, err := c.ReadAll("/hello-world-1.txt")
 	assert.NoError(t, err)
 
 	assert.Equal(t, "Hello World", string(b))
