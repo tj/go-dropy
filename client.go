@@ -150,3 +150,12 @@ func (c *Client) Copy(src, dst string) error {
 	})
 	return err
 }
+
+// Move file from `src` to `dst`.
+func (c *Client) Move(src, dst string) error {
+	_, err := c.Files.Move(&dropbox.MoveInput{
+		FromPath: src,
+		ToPath:   dst,
+	})
+	return err
+}
