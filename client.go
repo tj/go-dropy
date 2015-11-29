@@ -136,6 +136,16 @@ func (c *Client) Read(name string) ([]byte, error) {
 	return ioutil.ReadAll(f)
 }
 
+// Download returns the contents of `name`.
+func (c *Client) Download(name string) (io.ReadCloser, error) {
+	out, err := c.Files.Download(&dropbox.DownloadInput{name})
+	if err != nil {
+		return nil, err
+	}
+
+	return out.Body, nil
+}
+
 // Preview returns the PDF preview of `name`.
 func (c *Client) Preview(name string) (io.ReadCloser, error) {
 	out, err := c.Files.GetPreview(&dropbox.GetPreviewInput{name})
