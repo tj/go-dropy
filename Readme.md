@@ -4,7 +4,7 @@
 
 # Dropy
 
- High level POSIX-y Dropbox v2 client for Go built on top of [go-dropbox](https://github.com/tj/go-dropbox).
+ High level Dropbox v2 client for Go built on top of [go-dropbox](https://github.com/tj/go-dropbox).
 
 # License
 
