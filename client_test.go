@@ -85,6 +85,15 @@ func TestClient_ListFolders(t *testing.T) {
 	assert.Equal(t, "one", ents[0].Name())
 }
 
+func TestClient_ListFiles(t *testing.T) {
+	t.Parallel()
+	c := client()
+	ents, err := c.ListFiles("/list-types")
+	assert.NoError(t, err)
+	assert.Equal(t, 3, len(ents))
+	assert.Equal(t, "one.txt", ents[0].Name())
+}
+
 func TestClient_Open(t *testing.T) {
 	t.Parallel()
 	c := client()

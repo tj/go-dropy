@@ -111,6 +111,13 @@ func (c *Client) ListFolders(name string) ([]os.FileInfo, error) {
 	})
 }
 
+// ListFiles returns all files in dir `name`.
+func (c *Client) ListFiles(name string) ([]os.FileInfo, error) {
+	return c.ListFilter(name, func(info os.FileInfo) bool {
+		return !info.IsDir()
+	})
+}
+
 // Open returns a File for reading and writing.
 func (c *Client) Open(name string) *File {
 	r, w := io.Pipe()
