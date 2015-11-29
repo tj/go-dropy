@@ -141,3 +141,12 @@ func (c *Client) Delete(name string) error {
 	_, err := c.Files.Delete(&dropbox.DeleteInput{name})
 	return err
 }
+
+// Copy file from `src` to `dst`.
+func (c *Client) Copy(src, dst string) error {
+	_, err := c.Files.Copy(&dropbox.CopyInput{
+		FromPath: src,
+		ToPath:   dst,
+	})
+	return err
+}
