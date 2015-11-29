@@ -136,6 +136,16 @@ func (c *Client) Read(name string) ([]byte, error) {
 	return ioutil.ReadAll(f)
 }
 
+// Preview returns the PDF preview of `name`.
+func (c *Client) Preview(name string) (io.ReadCloser, error) {
+	out, err := c.Files.GetPreview(&dropbox.GetPreviewInput{name})
+	if err != nil {
+		return nil, err
+	}
+
+	return out.Body, nil
+}
+
 // Delete file `name`.
 func (c *Client) Delete(name string) error {
 	_, err := c.Files.Delete(&dropbox.DeleteInput{name})
