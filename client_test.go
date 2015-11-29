@@ -116,10 +116,10 @@ func TestCient_Open_missing(t *testing.T) {
 	assert.EqualError(t, err, "open /dev/null: no such file or directory")
 }
 
-func TestClient_ReadAll(t *testing.T) {
+func TestClient_Read(t *testing.T) {
 	t.Parallel()
 	c := client()
-	b, err := c.ReadAll("/hello.txt")
+	b, err := c.Read("/hello.txt")
 	assert.NoError(t, err)
 	assert.Equal(t, "whoop", string(b))
 }

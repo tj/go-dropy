@@ -68,7 +68,7 @@ func TestFile_Write(t *testing.T) {
 
 	assert.NoError(t, f.Close())
 
-	b, err := c.ReadAll("/hello-world-1.txt")
+	b, err := c.Read("/hello-world-1.txt")
 	assert.NoError(t, err)
 
 	assert.Equal(t, "Hello World", string(b))

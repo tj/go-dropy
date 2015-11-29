@@ -129,8 +129,8 @@ func (c *Client) Open(name string) *File {
 	}
 }
 
-// ReadAll returns the contents of `name`.
-func (c *Client) ReadAll(name string) ([]byte, error) {
+// Read returns the contents of `name`.
+func (c *Client) Read(name string) ([]byte, error) {
 	f := c.Open(name)
 	defer f.Close()
 	return ioutil.ReadAll(f)
