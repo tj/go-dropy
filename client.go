@@ -135,3 +135,9 @@ func (c *Client) Read(name string) ([]byte, error) {
 	defer f.Close()
 	return ioutil.ReadAll(f)
 }
+
+// Delete file `name`.
+func (c *Client) Delete(name string) error {
+	_, err := c.Files.Delete(&dropbox.DeleteInput{name})
+	return err
+}

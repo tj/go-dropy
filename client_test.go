@@ -123,3 +123,14 @@ func TestClient_Read(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "whoop", string(b))
 }
+
+func TestClient_Delete(t *testing.T) {
+	t.Parallel()
+	c := client()
+
+	f := c.Open("/delete.txt")
+	f.Write([]byte("Hello World"))
+	assert.NoError(t, f.Close())
+
+	assert.NoError(t, c.Delete("/delete.txt"))
+}
