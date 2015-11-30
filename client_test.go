@@ -103,7 +103,7 @@ func TestClient_Open(t *testing.T) {
 	b, err := ioutil.ReadAll(f)
 	assert.NoError(t, err)
 
-	assert.Equal(t, "whoop", string(b))
+	assert.Equal(t, "world", string(b))
 }
 
 func TestCient_Open_missing(t *testing.T) {
@@ -121,7 +121,7 @@ func TestClient_Read(t *testing.T) {
 	c := client()
 	b, err := c.Read("/hello.txt")
 	assert.NoError(t, err)
-	assert.Equal(t, "whoop", string(b))
+	assert.Equal(t, "world", string(b))
 }
 
 func TestClient_Delete(t *testing.T) {

@@ -16,7 +16,7 @@ func TestFile_Open(t *testing.T) {
 	b, err := ioutil.ReadAll(f)
 	assert.NoError(t, err)
 
-	assert.Equal(t, "whoop", string(b))
+	assert.Equal(t, "world", string(b))
 }
 
 func TestFile_Close(t *testing.T) {
@@ -42,11 +42,11 @@ func TestFile_Read(t *testing.T) {
 
 	f := c.Open("/hello.txt")
 
-	b := make([]byte, 3)
+	b := make([]byte, 5)
 	n, err := f.Read(b)
-	assert.Equal(t, 3, n)
-	assert.NoError(t, err)
-	assert.Equal(t, "who", string(b))
+	assert.Equal(t, 5, n)
+	assert.EqualError(t, err, "EOF")
+	assert.Equal(t, "world", string(b))
 
 	assert.NoError(t, f.Close())
 }

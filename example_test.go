@@ -16,10 +16,10 @@ func Example() {
 	client := dropy.New(dropbox.New(dropbox.NewConfig(token)))
 
 	file := client.Open("/demo.txt")
+	defer file.Close()
+
 	io.Copy(file, strings.NewReader("Hello World"))
 
 	io.Copy(os.Stdout, file)
 	// Output: Hello World
-
-	file.Close()
 }
