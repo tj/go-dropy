@@ -134,3 +134,23 @@ func TestClient_Delete(t *testing.T) {
 
 	assert.NoError(t, c.Delete("/delete.txt"))
 }
+
+func TestClient_Search(t *testing.T) {
+	t.Parallel()
+	c := client()
+
+	list, err := c.Search("/list", "100")
+	assert.NoError(t, err)
+
+	assert.Equal(t, 11, len(list))
+}
+
+func TestClient_Search_more(t *testing.T) {
+	t.Parallel()
+	c := client()
+
+	list, err := c.Search("/list", "10")
+	assert.NoError(t, err)
+
+	assert.Equal(t, 111, len(list))
+}

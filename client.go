@@ -35,7 +35,7 @@ func (c *Client) Stat(name string) (os.FileInfo, error) {
 }
 
 // ListN returns entries in dir `name`. Up to `n` entries, or all when `n` <= 0.
-func (c *Client) ListN(name string, n int) (ents []os.FileInfo, err error) {
+func (c *Client) ListN(name string, n int) (list []os.FileInfo, err error) {
 	var cursor string
 
 	if n <= 0 {
@@ -62,11 +62,11 @@ func (c *Client) ListN(name string, n int) (ents []os.FileInfo, err error) {
 		}
 
 		for _, ent := range out.Entries {
-			ents = append(ents, &FileInfo{ent})
+			list = append(list, &FileInfo{ent})
 		}
 
-		if n >= 0 && len(ents) >= n {
-			ents = ents[:n]
+		if n >= 0 && len(list) >= n {
+			list = list[:n]
 			break
 		}
 
@@ -75,7 +75,7 @@ func (c *Client) ListN(name string, n int) (ents []os.FileInfo, err error) {
 		}
 	}
 
-	if n >= 0 && len(ents) == 0 {
+	if n >= 0 && len(list) == 0 {
 		err = io.EOF
 		return
 	}
@@ -178,4 +178,32 @@ func (c *Client) Move(src, dst string) error {
 		ToPath:   dst,
 	})
 	return err
+}
+
+// Search return results for a search against `path` with the given `query`.
+func (c *Client) Search(path, query string) (list []os.FileInfo, err error) {
+	var start uint64
+
+more:
+	out, err := c.Files.Search(&dropbox.SearchInput{
+		Mode:  dropbox.SearchModeFilename,
+		Path:  path,
+		Query: query,
+		Start: start,
+	})
+
+	if err != nil {
+		return
+	}
+
+	for _, match := range out.Matches {
+		list = append(list, &FileInfo{match.Metadata})
+	}
+
+	if out.More {
+		start = out.Start
+		goto more
+	}
+
+	return
 }
