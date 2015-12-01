@@ -15,11 +15,7 @@ func Example() {
 	token := env.MustGet("DROPBOX_ACCESS_TOKEN")
 	client := dropy.New(dropbox.New(dropbox.NewConfig(token)))
 
-	file := client.Open("/demo.txt")
-	defer file.Close()
-
-	io.Copy(file, strings.NewReader("Hello World"))
-
-	io.Copy(os.Stdout, file)
+	client.Upload("/demo.txt", strings.NewReader("Hello World"))
+	io.Copy(os.Stdout, client.Open("/demo.txt"))
 	// Output: Hello World
 }
