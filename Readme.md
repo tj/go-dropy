@@ -6,6 +6,16 @@
 
  High level Dropbox v2 client for Go built on top of [go-dropbox](https://github.com/tj/go-dropbox).
 
+## Example
+
+```go
+token := os.Getenv("DROPBOX_ACCESS_TOKEN")
+client := dropy.New(dropbox.New(dropbox.NewConfig(token)))
+
+client.Upload("/demo.txt", strings.NewReader("Hello World"))
+io.Copy(os.Stdout, client.Open("/demo.txt"))
+```
+
 ## Testing
 
  To manually run tests use the test account access token:
