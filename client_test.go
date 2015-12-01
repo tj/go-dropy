@@ -3,6 +3,7 @@ package dropy
 import (
 	"io/ioutil"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/segmentio/go-env"
@@ -153,4 +154,17 @@ func TestClient_Search_more(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Equal(t, 111, len(list))
+}
+
+func TestClient_Upload(t *testing.T) {
+	t.Parallel()
+
+	c := client()
+	err := c.Upload("/upload-1.txt", strings.NewReader("one"))
+	assert.NoError(t, err, "error uploading")
+
+	b, err := c.Read("/upload-1.txt")
+	assert.NoError(t, err, "error reading")
+
+	assert.Equal(t, "one", string(b))
 }

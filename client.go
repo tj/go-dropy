@@ -207,3 +207,15 @@ more:
 
 	return
 }
+
+// Upload reader to path.
+func (c *Client) Upload(path string, r io.Reader) error {
+	_, err := c.Files.Upload(&dropbox.UploadInput{
+		Mode:   dropbox.WriteModeOverwrite,
+		Path:   path,
+		Reader: r,
+		Mute:   true,
+	})
+
+	return err
+}
