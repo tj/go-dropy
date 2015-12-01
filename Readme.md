@@ -6,6 +6,15 @@
 
  High level Dropbox v2 client for Go built on top of [go-dropbox](https://github.com/tj/go-dropbox).
 
+## Testing
+
+ To manually run tests use the test account access token:
+
+```
+$ export DROPBOX_ACCESS_TOKEN=oENFkq_oIVAAAAAAAAAABqI2Nor2e9_ORA3oAZDQexMgJocCQX4aOFXZuDc1t-Sx
+$ go test -v
+```
+
 # License
 
  MIT
