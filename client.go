@@ -156,6 +156,12 @@ func (c *Client) Preview(name string) (io.ReadCloser, error) {
 	return out.Body, nil
 }
 
+// Mkdir creates folder `name`.
+func (c *Client) Mkdir(name string) error {
+	_, err := c.Files.CreateFolder(&dropbox.CreateFolderInput{name})
+	return err
+}
+
 // Delete file `name`.
 func (c *Client) Delete(name string) error {
 	_, err := c.Files.Delete(&dropbox.DeleteInput{name})

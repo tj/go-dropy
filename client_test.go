@@ -28,6 +28,16 @@ func TestClient_Stat(t *testing.T) {
 	assert.Equal(t, int64(5), info.Size())
 }
 
+func TestClient_Mkdir(t *testing.T) {
+	t.Parallel()
+	c := client()
+	c.Delete("/some-new-dir")
+	assert.NoError(t, c.Mkdir("/some-new-dir"))
+	stat, err := c.Stat("/some-new-dir")
+	assert.NoError(t, err)
+	assert.True(t, stat.IsDir())
+}
+
 func TestClient_List(t *testing.T) {
 	t.Parallel()
 	c := client()
@@ -128,12 +138,8 @@ func TestClient_Read(t *testing.T) {
 func TestClient_Delete(t *testing.T) {
 	t.Parallel()
 	c := client()
-
-	f := c.Open("/delete.txt")
-	f.Write([]byte("Hello World"))
-	assert.NoError(t, f.Close())
-
-	assert.NoError(t, c.Delete("/delete.txt"))
+	assert.NoError(t, c.Mkdir("/delete-me"))
+	assert.NoError(t, c.Delete("/delete-me"))
 }
 
 func TestClient_Search(t *testing.T) {
